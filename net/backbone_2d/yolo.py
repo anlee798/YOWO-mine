@@ -1,10 +1,9 @@
 import torch
 import torch.nn as nn
 
-from ConvNext import ConvNeXt_Small, ConvNeXt_Tiny
-from CSPdarknet import C3, Conv, CSPDarknet
-from Swin_transformer import Swin_transformer_Tiny
-
+from .ConvNext import ConvNeXt_Small, ConvNeXt_Tiny
+from .CSPdarknet import C3, Conv, CSPDarknet
+from .Swin_transformer import Swin_transformer_Tiny
 
 #---------------------------------------------------#
 #   yolo_body

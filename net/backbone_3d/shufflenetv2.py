@@ -130,18 +130,50 @@ class ShuffleNetV2(nn.Module):
         self.conv1 = conv_bn(3, input_channel, stride=(1,2,2))
         self.maxpool = nn.MaxPool3d(kernel_size=3, stride=2, padding=1)
         
-        self.features = []
-        # building inverted residual blocks
-        for idxstage in range(len(self.stage_repeats)):
-            numrepeat = self.stage_repeats[idxstage]
-            output_channel = self.stage_out_channels[idxstage+2]
-            for i in range(numrepeat):
-                stride = 2 if i == 0 else 1
-                self.features.append(InvertedResidual(input_channel, output_channel, stride))
-                input_channel = output_channel
+        # self.features = []
+        # # building inverted residual blocks
+        # for idxstage in range(len(self.stage_repeats)): # 0  1  2
+        #     numrepeat = self.stage_repeats[idxstage]    # 4  8  4
+        #     output_channel = self.stage_out_channels[idxstage+2] # 116  232  464   
+        #     for i in range(numrepeat):
+        #         stride = 2 if i == 0 else 1
+        #         self.features.append(InvertedResidual(input_channel, output_channel, stride))
+        #         input_channel = output_channel
                 
-        # make it nn.Sequential
-        self.features = nn.Sequential(*self.features)
+        # # make it nn.Sequential
+        # self.features = nn.Sequential(*self.features)
+        
+        self.features1 = []
+        idxstage = 0
+        numrepeat1 = self.stage_repeats[idxstage]
+        output_channel = self.stage_out_channels[idxstage+2]
+        for i in range(numrepeat1):
+            stride = 2 if i == 0 else 1
+            self.features1.append(InvertedResidual(input_channel, output_channel, stride))
+            input_channel = output_channel
+        self.features1 = nn.Sequential(*self.features1)
+        
+        self.features2 = []
+        idxstage = 1
+        numrepeat2 = self.stage_repeats[idxstage]
+        output_channel = self.stage_out_channels[idxstage+2]
+        for i in range(numrepeat2):
+            stride = 2 if i == 0 else 1
+            self.features2.append(InvertedResidual(input_channel, output_channel, stride))
+            input_channel = output_channel
+        self.features2 = nn.Sequential(*self.features2)
+        
+        self.features3 = []
+        idxstage = 2
+        numrepeat3 = self.stage_repeats[idxstage]
+        output_channel = self.stage_out_channels[idxstage+2]
+        for i in range(numrepeat3):
+            stride = 2 if i == 0 else 1
+            self.features3.append(InvertedResidual(input_channel, output_channel, stride))
+            input_channel = output_channel
+        self.features3 = nn.Sequential(*self.features3)
+        
+        
 
         # building last several layers
         self.conv_last      = conv_1x1x1_bn(input_channel, self.stage_out_channels[-1])
@@ -155,12 +187,20 @@ class ShuffleNetV2(nn.Module):
     def forward(self, x):
         out = self.conv1(x)
         out = self.maxpool(out)
-        out = self.features(out)
-        out = self.conv_last(out)
-        out = F.avg_pool3d(out, out.data.size()[-3:])
-        out = out.view(out.size(0), -1)
-        out = self.classifier(out)
-        return out
+        # out = self.features(out)
+        # print("out.size()",out.size()) # 1 24 8 56 56
+        out1 = self.features1(out)
+        #print("out1.size()",out.size())
+        out2 = self.features2(out1)
+        #print("out2.size()",out.size())
+        out3 = self.features3(out2)
+        #print("out3.size()",out.size())
+        
+        # out = self.conv_last(out)
+        # out = F.avg_pool3d(out, out.data.size()[-3:])
+        # out = out.view(out.size(0), -1)
+        # out = self.classifier(out)
+        return out1,out2,out3
 
 
 def get_fine_tuning_parameters(model, ft_portion):
@@ -198,11 +238,14 @@ if __name__ == "__main__":
     model = get_model(num_classes=101, sample_size=224, width_mult=1.)
     #model = model.cuda()
     model = nn.DataParallel(model, device_ids=None)
-    print(model)
+    #print(model)
 
-    input_var = Variable(torch.randn(1, 3, 16, 112, 112))
+    input_var = Variable(torch.randn(1, 3, 16, 224, 224))
     t0 = time.time()
     output = model(input_var)
     print('time', time.time() - t0) #0.028362035751342773
     print(output.shape)
     
+'''
+python shufflenetv2.py
+'''
