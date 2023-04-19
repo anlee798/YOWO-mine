@@ -29,7 +29,12 @@ if dataset == 'ucf24':
 
     # train = getattr(sys.modules[__name__], 'train_ucf24_jhmdb21')
     # test  = getattr(sys.modules[__name__], 'test_ucf24_jhmdb21')
-    
+for batch_idx,(data, target) in enumerate(train_loader):
+    print("data.size()",data.size())
+    print("target.size()",target.size())#torch.Size([1, 250])
+    import sys
+    sys.exit(0)
+    #print("target.size()",target)
 '''
-python main.py --cfg cfg/ucf24.yaml
+    python main.py --cfg cfg/ucf24.yaml
 '''

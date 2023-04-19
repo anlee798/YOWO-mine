@@ -16,7 +16,7 @@ backbone = 'cspdarknet'
 pretrained = False
 input_shape = [224, 224]
 
-NUM_CLASSES = 81
+NUM_CLASSES = 80
 
 class YOWO(nn.Module):
     def __init__(self):

@@ -38,15 +38,16 @@ class UCF_JHMDB_Dataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         imgpath = self.lines[index].rstrip()
+        #print(imgpath)
 
         if self.train: # For Training
-            jitter = 0.2
-            hue = 0.1
-            saturation = 1.5 
-            exposure = 1.5
+            jitter = 0.2#抖动
+            hue = 0.1#色调
+            saturation = 1.5 #饱和
+            exposure = 1.5 #曝光
 
             clip, label = load_data_detection(self.base_path, imgpath,  self.train, self.clip_duration, self.sampling_rate, self.shape, self.dataset, jitter, hue, saturation, exposure)
-
+            #print("label::",label.size()) #torch.Size([250])
         else: # For Testing
             frame_idx, clip, label = load_data_detection(self.base_path, imgpath, False, self.clip_duration, self.sampling_rate, self.shape, self.dataset)
             clip = [img.resize(self.shape) for img in clip]
@@ -61,6 +62,7 @@ class UCF_JHMDB_Dataset(Dataset):
             label = self.target_transform(label)
 
         if self.train:
+            #print("label.size()",label.size()) #torch.Size([250])
             return (clip, label)
         else:
             return (frame_idx, clip, label)

@@ -2,7 +2,7 @@ TRAIN:
   #RESUME_PATH: "weights/yowo_ucf101-24_16f_best_fmap_08749.pth"
   RESUME_PATH: ""
   DATASET: ucf24  # `ava`, `ucf24` or `jhmdb21`
-  BATCH_SIZE: 10
+  BATCH_SIZE: 1
   TOTAL_BATCH_SIZE: 128
   LEARNING_RATE: 1e-4
   EVALUATE: False

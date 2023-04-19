@@ -91,6 +91,7 @@ def data_augmentation(clip, shape, jitter, hue, saturation, exposure):
 def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy):
     max_boxes = 50
     label = np.zeros((max_boxes,5))
+    #print("fill_truth_detection label:",label.shape) #(50, 5)
     if os.path.getsize(labpath):
         bs = np.loadtxt(labpath)
         if bs is None:
@@ -136,6 +137,8 @@ def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy):
                 break
 
     label = np.reshape(label, (-1))
+    #print("label01",label.shape) #(250,)
+    #print(label)
     return label
 
 def load_data_detection(base_path, imgpath, train, train_dur, sampling_rate, shape, dataset_use='ucf24', jitter=0.2, hue=0.1, saturation=1.5, exposure=1.5):
