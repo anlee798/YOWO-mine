@@ -146,9 +146,12 @@ def load_data_detection(base_path, imgpath, train, train_dur, sampling_rate, sha
 
     im_split = imgpath.split('/')
     num_parts = len(im_split)
+    print("num_parts",num_parts)
     im_ind = int(im_split[num_parts-1][0:5])
+    print("im_ind",im_ind)
     labpath = os.path.join(base_path, 'labels', im_split[0], im_split[1] ,'{:05d}.txt'.format(im_ind))
 
+    print("labpath:",labpath)
     img_folder = os.path.join(base_path, 'rgb-images', im_split[0], im_split[1])
     if dataset_use == 'ucf24':
         max_num = len(os.listdir(img_folder))

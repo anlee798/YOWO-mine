@@ -2,6 +2,7 @@ from datasets import list_dataset
 from torchvision import datasets, transforms
 import torch
 from cfg import parser
+from core.region_loss import RegionLoss
 
 args  = parser.parse_args()
 cfg   = parser.load_config(args)
@@ -24,17 +25,28 @@ if dataset == 'ucf24':
                                                num_workers=cfg.DATA_LOADER.NUM_WORKERS, drop_last=False, pin_memory=True)
 
     #Mac
-    # loss_module   = RegionLoss(cfg).cuda()
+    loss_module   = RegionLoss(cfg)
     # loss_module   = RegionLoss(cfg).to(device)
 
     # train = getattr(sys.modules[__name__], 'train_ucf24_jhmdb21')
     # test  = getattr(sys.modules[__name__], 'test_ucf24_jhmdb21')
-for batch_idx,(data, target) in enumerate(train_loader):
-    print("data.size()",data.size())
-    print("target.size()",target.size())#torch.Size([1, 250])
-    import sys
-    sys.exit(0)
-    #print("target.size()",target)
+    
+    loss_module.reset_meters()
+    l_loader = len(train_loader)
+    for batch_idx, (data, target) in enumerate(train_loader):
+        output = torch.randn(1, 145, 7, 7)
+        print("target:",target.size())
+        loss = loss_module(output, target, 1, batch_idx, l_loader)
+        import sys
+        sys.exit(0)
+
+
+# for batch_idx,(data, target) in enumerate(train_loader):
+#     print("data.size()",data.size())
+#     print("target.size()",target.size())#torch.Size([1, 250])
+#     import sys
+#     sys.exit(0)
+#     #print("target.size()",target)
 '''
     python main.py --cfg cfg/ucf24.yaml
 '''
