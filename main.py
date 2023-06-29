@@ -9,6 +9,7 @@ cfg   = parser.load_config(args)
 
 dataset = 'ucf24'
 
+
 if dataset == 'ucf24':
     train_dataset = list_dataset.UCF_JHMDB_Dataset(cfg.LISTDATA.BASE_PTH, cfg.LISTDATA.TRAIN_FILE, dataset=dataset,
                        shape=(cfg.DATA.TRAIN_CROP_SIZE, cfg.DATA.TRAIN_CROP_SIZE),
